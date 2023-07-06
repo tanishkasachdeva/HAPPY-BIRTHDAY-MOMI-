@@ -52,21 +52,34 @@ if(!this.rotating) {
     }
     this.prevTouchX = this.touchMoveX;
     this.prevTouchY = this.touchMoveY;
+
+    paper.style.transform = `translateX(${this.currentPaperX}px) translateY(${this.currentPaperY}px) rotateZ(${this.rotation}deg)`;
   }
 })
 
 
 paper.addEventListener('touchstart', (e) => {
-  //if(this.holdingPaper) return; 
+  if(this.holdingPaper) return; 
   this.holdingPaper = true;
   
   paper.style.zIndex = highestZZ;
   highestZZ += 1;
+
+  if (e.touches.length === 1) {
+    // Single touch
+    this.mouseTouchX = e.touches[0].clientX;
+    this.mouseTouchY = e.touches[0].clientY;
+    this.prevMouseX = e.touches[0].clientX;
+    this.prevMouseY = e.touches[0].clientY;
+  } else if (e.touches.length === 2) {
+    // Two touches
+    this.rotating = true;
+  }
   
-  this.touchStartX = e.touches[0].clientX;
+ /* this.touchStartX = e.touches[0].clientX;
   this.touchStartY = e.touches[0].clientY;
   this.prevTouchX = this.touchStartX;
-  this.prevTouchY = this.touchStartY;
+  this.prevTouchY = this.touchStartY;*/
 });
 
 
@@ -90,6 +103,13 @@ return paper;
   }
 
 }
+
+const papers = Array.from(document.querySelectorAll('.paper'));
+
+papers.forEach(paper => {
+  const p = new Paper();
+  p.init(paper);
+});
 
 
     //e.preventDefault();
